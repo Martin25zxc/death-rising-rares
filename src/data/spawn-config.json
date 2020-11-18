@@ -1,0 +1,18 @@
+{
+    "US":{
+        "registeredSpawn": 
+        {
+            "date":"2020-11-16 11:50:00 GMT",
+            "id":174048
+        }
+    },
+    "EU":{
+        "registeredSpawn": 
+        {
+            "date":"2020-11-11 10:20:00 GMT",
+            "id":174055
+        }
+    },
+    "GMT":0,
+    "timer":600
+}
