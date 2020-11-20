@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import "./styles/Modal.css";
+import "../styles/Modal.css";
 function Modal(props) {
   if (!props.showModal) return null;
 

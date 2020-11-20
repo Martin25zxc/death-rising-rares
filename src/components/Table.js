@@ -7,7 +7,7 @@ const Table = (props) => {
     <div>
       <table className="table table-bordered table-hover">
         <TableHeader headers={headers} />
-        <TableBody headers={headers} rows={rows} />
+        <TableBody rows={rows} />
       </table>
     </div>
   );

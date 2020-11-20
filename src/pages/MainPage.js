@@ -1,17 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
+import db from "../data/rares.json";
 import Table from "../components/Table";
 import SearchBar from "../components/SearchBar";
-import db from "../data/rares.json";
+import SettingsButton from "../components/SettingsButton";
 import RarareICMapping from "../components/RareICMapping";
-const DEFAULT_REGION = "US";
-const DEFAULT_GMT = -3;
+
 function useSearchRares(rares) {
   // Search variables
-  const [query, setQuery] = React.useState("");
-  const [filteredRares, setFilteredRares] = React.useState(rares);
-  // Variables for calculate spawn
-  // const [gmt, setgmt] = React.useState(spawnConfig.gmt);
-  // const [region, setRegion] = React.useState("US");
+  const [query, setQuery] = useState("");
+  const [filteredRares, setFilteredRares] = useState(rares);
 
   React.useMemo(() => {
     const result = !query
@@ -19,38 +16,58 @@ function useSearchRares(rares) {
       : rares.filter((rare) => {
           return rare.name.toLowerCase().includes(query.toLowerCase());
         });
+
     setFilteredRares(result);
   }, [rares, query]);
   return { query, setQuery, filteredRares };
 }
-function useChangeSpawnSetting() {}
 function MainPage() {
+  // const [error, setError] = useState(null);
+  // const [intervalId, setIntervalID] = useState();
+
+  //Settings
+  //Default settings
+  var defaultTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  var defaultRegion = [-1, 0, 1, 2, 3, 4, 5].includes(defaultTz) ? "EU" : "US";
+  const [settings, setsettings] = React.useState({
+    region: defaultRegion,
+    tz: defaultTz,
+  });
   //Search and result search variables
   const { query, setQuery, filteredRares } = useSearchRares(db);
   //Modal variables
-  const [showModal, setShowModal] = React.useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
 
-  var data = RarareICMapping(filteredRares, {});
+  const data = RarareICMapping(filteredRares, settings);
 
   return (
     <React.Fragment>
       <div className="container p-2">
-        <SearchBar
-          showModal={showModal}
-          onCloseModal={handleClose}
-          onOpenModal={handleShow}
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-          }}
-        />
+        <div className="input-group mb-3">
+          <SearchBar
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+            }}
+          />
+          <div className="input-group-append">
+            <SettingsButton
+              settings={settings}
+              setSettings={setsettings}
+              showModal={showModal}
+              onCloseModal={handleClose}
+              onOpenModal={handleShow}
+            />
+          </div>
+        </div>
+
         <div className="row">
           <div className="col">
             {data.length > 0 && (
-              <Table headers={Object.keys(data[0])} rows={data} />
+              <Table headers={["Rare", "Next spawn", ""]} rows={data} />
             )}
           </div>
         </div>

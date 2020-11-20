@@ -1,38 +1,47 @@
 import spawnConfig from "../data/spawn-config.json";
+import moment from "moment-timezone";
+moment().tz("UTC").format();
+
+const toTimeZone = (time, zone, format = "HH:mm") => {
+  return moment(time, format).tz(zone.toString()).format(format);
+};
 /*
 rares: List of npcs we want to map
-settings: "region" and "gmt" selected
+settings: "region" and "tz" selected
 */
-function detectRegion() {
-  // var tz = -new Date().getTimezoneOffset() / 60;
-  // var naTz = [13, 14, -11, -10, -9, -8, -7, -6, -5, -4];
-  // var euTz = [-1, 0, 1, 2, 3, 4, 5];
-  // return ((tz>-12 && tz <-3)||())? "US" : euTz.contains(tz) ? "US" : "";
-}
-
 function RarareICMapping(rares, settings) {
-  var tz = -new Date().getTimezoneOffset() / 60;
-  rares.map((rare) => {
-    return rare;
-    //calculate initial spawn for all
-    // var configRSpwn = spawnConfig[settings.region];
-    // var rspawn = spawnConfig[settings.region]
-    //  var registeredSpawn= settings[region].registeredSpawn;
-    //  var compareDate = new Date();
+  const tz = settings ? settings.tz : new Date().getTimezoneOffset().toString();
+  const region = settings ? settings.region : "US";
+  const now = moment().toDate();
+  const configRSpwn = spawnConfig[region];
+  const spawnInterval = spawnConfig.timer / 60;
+  const reSpawnInterval = spawnInterval * rares.length;
 
-    // spawnregistered= moment(spawnregistered).add(-3,"hour").toDate();
-    // compareDate= moment(compareDate).add(-3,"hour").toDate();
-    //     var nextSpawn=
-    //     //Calculate next spawn
-    //   //Map macros
-    //     var mapped={
-    //       name,
-    //       nextSpawn = "",
-    //        etc = ""
-    //     }
-    //     return mapped;
+  rares = rares.map((rare) => {
+    //calculate initial spawn
+    const spawnDiff =
+      (configRSpwn.registeredSpawn.id - rare.id) * spawnInterval;
+
+    const rsDate = moment(configRSpwn.registeredSpawn.date)
+      .add(spawnDiff, "minutes")
+      .toDate();
+    //Calculate next spawn
+    var tfa = (now - rsDate) / (1000 * 60) / reSpawnInterval;
+    var minutesNextSpawn = Math.ceil(reSpawnInterval * (Math.ceil(tfa) - tfa));
+    const nextSpawn = moment(now).add(minutesNextSpawn, "minutes");
+
+    var r = {
+      ...rare,
+      favorite: false,
+
+      nextSpawn: toTimeZone(nextSpawn, tz),
+      minutesNextSpawn: minutesNextSpawn,
+    };
+    return r;
   });
-
+  rares.sort(function (a, b) {
+    return a.minutesNextSpawn - b.minutesNextSpawn;
+  });
   return rares;
 }
 
