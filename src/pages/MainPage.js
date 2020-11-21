@@ -27,12 +27,13 @@ function MainPage() {
 
   //Settings
   //Default settings
-  var defaultTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  var defaultRegion = [-1, 0, 1, 2, 3, 4, 5].includes(defaultTz) ? "EU" : "US";
-  const [settings, setsettings] = React.useState({
-    region: defaultRegion,
-    tz: defaultTz,
-  });
+  const defaultSettings = {
+    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    region: [-1, 0, 1, 2, 3, 4, 5].includes(-new Date().getTimezoneOffset() / 3)
+      ? "EU"
+      : "US",
+  };
+  const [settings, setsettings] = React.useState(defaultSettings);
   //Search and result search variables
   const { query, setQuery, filteredRares } = useSearchRares(db);
   //Modal variables
