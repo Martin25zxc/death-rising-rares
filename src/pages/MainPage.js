@@ -46,7 +46,7 @@ function MainPage() {
   return (
     <React.Fragment>
       <div className="container p-2">
-        <h2 class="title">Death Rising</h2>
+        <h2 className="title">Death Rising</h2>
         <div className="input-group mb-3">
           <SearchBar
             value={query}
