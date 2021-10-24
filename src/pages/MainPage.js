@@ -1,30 +1,11 @@
 import React, { useState } from "react";
-import db from "../data/rares.json";
+import raresList from "../data/rares.json";
 import Table from "../components/Table";
 import SearchBar from "../components/SearchBar";
 import SettingsButton from "../components/SettingsButton";
 import RarareICMapping from "../components/RareICMapping";
 
-function useSearchRares(rares) {
-  // Search variables
-  const [query, setQuery] = useState("");
-  const [filteredRares, setFilteredRares] = useState(rares);
-
-  React.useMemo(() => {
-    const result = !query
-      ? rares
-      : rares.filter((rare) => {
-          return rare.name.toLowerCase().includes(query.toLowerCase());
-        });
-
-    setFilteredRares(result);
-  }, [rares, query]);
-  return { query, setQuery, filteredRares };
-}
 function MainPage() {
-  // const [error, setError] = useState(null);
-  // const [intervalId, setIntervalID] = useState();
-
   //Settings
   //Default settings
   const defaultSettings = {
@@ -35,7 +16,13 @@ function MainPage() {
   };
   const [settings, setsettings] = React.useState(defaultSettings);
   //Search and result search variables
-  const { query, setQuery, filteredRares } = useSearchRares(db);
+  const [query, setQuery] = useState("");
+  const filteredRares = !query
+    ? raresList
+    : raresList.filter((rare) =>
+        rare.name.toLowerCase().includes(query.toLowerCase())
+      );
+
   //Modal variables
   const [showModal, setShowModal] = useState(false);
 
@@ -43,7 +30,6 @@ function MainPage() {
   const handleShow = () => setShowModal(true);
 
   const data = RarareICMapping(filteredRares, settings);
-
   return (
     <React.Fragment>
       <div className="container p-2">

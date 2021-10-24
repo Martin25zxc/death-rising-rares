@@ -4,6 +4,7 @@ function SettingsButton(props) {
   return (
     <React.Fragment>
       <button
+        aria-label="Settings"
         className="btn btn-dark"
         type="button"
         onClick={props.onOpenModal}

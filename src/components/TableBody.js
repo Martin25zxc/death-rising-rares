@@ -19,6 +19,7 @@ const TableBody = (props) => {
         </td> */}
         <td className="table-light" key={`td-n-${id}`}>
           <a
+            className="link-primary"
             rel="noopener noreferrer"
             href={`https://www.wowhead.com/npc=${id}/`}
             target="_blank"
