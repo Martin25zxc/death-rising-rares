@@ -15,7 +15,7 @@ function RarareICMapping(rares, settings) {
   const now = moment().toDate();
   const configRSpwn = spawnConfig[region];
   const spawnInterval = spawnConfig.timer / 60;
-  const reSpawnInterval = spawnInterval * rares.length;
+  const reSpawnInterval = spawnInterval * spawnConfig.totalRares;
 
   rares = rares.map((rare) => {
     //calculate initial spawn
@@ -25,23 +25,21 @@ function RarareICMapping(rares, settings) {
     const rsDate = moment(configRSpwn.registeredSpawn.date)
       .add(spawnDiff, "minutes")
       .toDate();
+
     //Calculate next spawn
-    var tfa = (now - rsDate) / (1000 * 60) / reSpawnInterval;
-    var minutesNextSpawn = Math.ceil(reSpawnInterval * (Math.ceil(tfa) - tfa));
+    let tfa = (now - rsDate) / (1000 * 60) / reSpawnInterval;
+    let minutesNextSpawn = Math.ceil(reSpawnInterval * (Math.ceil(tfa) - tfa));
     const nextSpawn = moment(now).add(minutesNextSpawn, "minutes");
 
-    var r = {
+    let r = {
       ...rare,
       favorite: false,
-
       nextSpawn: toTimeZone(nextSpawn, tz),
       minutesNextSpawn: minutesNextSpawn,
     };
     return r;
   });
-  rares.sort(function (a, b) {
-    return a.minutesNextSpawn - b.minutesNextSpawn;
-  });
+  rares.sort((a, b) => a.minutesNextSpawn - b.minutesNextSpawn);
   return rares;
 }
 
